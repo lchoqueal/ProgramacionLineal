@@ -5,28 +5,31 @@
   <meta charset="UTF-8">
   <title>Programación Lineal</title>
   <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
   <div class="container">
     <h1>Programación Lineal</h1>
 
-    <form id="configForm" action="dual.php" method="post" >
+    <form id="configForm" method="post">
       <div>
-      <label for="variables">Número de Variables:</label>
-      <input type="number" id="variables" min="1" name="variables" required value="2">
+        <label for="variables">Número de Variables:</label>
+        <input type="number" id="variables" min="1" name="variables" required value="2">
 
-      <label for="restricciones">Número de Restricciones:</label>
-      <input type="number" id="restricciones" name="restricciones" min="1" required>
+        <label for="restricciones">Número de Restricciones:</label>
+        <input type="number" id="restricciones" name="restricciones" min="1" required>
 
-      <button type="button" onclick="generarTabla()">Generar Tabla</button>
-      
+        <button type="button" onclick="generarTabla()">Generar Tabla</button>
+      </div>
 
+      <div style="margin-top: 15px; margin-bottom: 15px;">
         <label><input type="radio" name="tipoZ" value="max" checked> Maximizar</label>
         <label><input type="radio" name="tipoZ" value="min"> Minimizar</label>
       </div>
     
-      <div id="tablaContainer"></div>
+      <div id="tablaContainer">
+        </div>
 
       <div class="metodos">
         <button type="button" onclick="resolverGrafico()">Método Gráfico</button>
@@ -34,9 +37,19 @@
         <button type="submit" formaction="dual.php">Método Dual</button>
         <button type="submit" formaction="granm.php">Método Gran M</button>
       </div>
-  </div>
-</form>
 
+      <div id="graficoResultados" style="margin-top: 20px; padding: 10px; border: 1px solid #eee;">
+        </div>
+
+      <div style="width:80%; max-width:600px; margin: 20px auto;">
+        <canvas id="graficoCanvas"></canvas>
+      </div>
+
+      <div id="resultadosSimplexDual" style="margin-top: 20px;">
+        </div>
+
+    </form>
+  </div>
 
   <script src="script.js"></script>
 </body>
