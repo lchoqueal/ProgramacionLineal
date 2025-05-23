@@ -1,0 +1,38 @@
+table.simplex {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  font-family: 'Segoe UI', sans-serif;
+  margin: 30px auto;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+table.simplex thead {
+  background-color: #4A90E2;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+table.simplex th, table.simplex td {
+  padding: 12px 16px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+}
+
+table.simplex tr:nth-child(even) td {
+  background-color: #f9f9f9;
+}
+
+table.simplex tr:hover td {
+  background-color: #e6f2ff;
+}
+
+table.simplex th:first-child,
+table.simplex td:first-child {
+  font-weight: bold;
+  background-color: #f0f4f8;
+}
