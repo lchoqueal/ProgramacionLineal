@@ -1,14 +1,10 @@
-// script.js
-
-// Variable global para mantener la instancia del gráfico y poder destruirla
 let myChartInstance = null;
 
 function generarTabla() {
-  // ... (código existente de generarTabla sin cambios) ...
   const numVariables = parseInt(document.getElementById('variables').value);
   const numRestricciones = parseInt(document.getElementById('restricciones').value);
   const tablaContainer = document.getElementById('tablaContainer');
-  tablaContainer.innerHTML = ''; // Limpiar contenido previo
+  tablaContainer.innerHTML = '';
 
   if (isNaN(numVariables) || isNaN(numRestricciones) || numVariables <= 0 || numRestricciones <= 0) {
     tablaContainer.innerHTML = '<p style="color:red;">Por favor, ingrese un número válido de variables y restricciones.</p>';
@@ -65,7 +61,6 @@ function generarTabla() {
 }
 
 function actualizarZ() {
-  // ... (código existente de actualizarZ sin cambios) ...
   const zInputs = document.querySelectorAll('.zcoef');
   const tipo = document.querySelector('input[name="tipoZ"]:checked').value;
   document.getElementById('tipoZLabel').textContent = tipo === 'max' ? 'Maximizar' : 'Minimizar';
@@ -88,7 +83,6 @@ function actualizarZ() {
 }
 
 function actualizarEcuaciones() {
-  // ... (código existente de actualizarEcuaciones sin cambios) ...
   const numRestricciones = parseInt(document.getElementById('restricciones').value) || 0;
   for (let r = 0; r < numRestricciones; r++) {
     const row = document.querySelector(`#tablaContainer tr[data-row="${r}"]`);
@@ -123,29 +117,25 @@ function actualizarEcuaciones() {
 }
 
 function resolverGrafico() {
-  // ... (código existente de resolverGrafico para cálculos) ...
-  // Copia todo el código de resolverGrafico que te di antes aquí,
-  // y AL FINAL de esa función, ANTES del último '}', añade la llamada a mostrarGrafico:
-
   const numVariables = parseInt(document.getElementById('variables').value);
   if (numVariables !== 2) {
     alert("El método gráfico solo está disponible para problemas con exactamente 2 variables.");
     document.getElementById('graficoResultados').innerHTML = '<p style="color:red;">El método gráfico solo está disponible para problemas con exactamente 2 variables.</p>';
     if (myChartInstance) {
-        myChartInstance.destroy(); // Destruir gráfico si existe
+        myChartInstance.destroy();
     }
-    document.getElementById('graficoCanvas').style.display = 'none'; // Ocultar canvas
+    document.getElementById('graficoCanvas').style.display = 'none';
     return;
   }
   document.getElementById('graficoResultados').innerHTML = ''; 
-  document.getElementById('graficoCanvas').style.display = 'block'; // Mostrar canvas
+  document.getElementById('graficoCanvas').style.display = 'block';
 
   const zInputs = document.querySelectorAll('.zcoef');
   const objCoeffs = [parseFloat(zInputs[0].value) || 0, parseFloat(zInputs[1].value) || 0];
   const tipoZ = document.querySelector('input[name="tipoZ"]:checked').value;
 
   const numRestricciones = parseInt(document.getElementById('restricciones').value);
-  const constraintsData = []; // Cambiado el nombre para claridad
+  const constraintsData = [];
 
   for (let r = 0; r < numRestricciones; r++) {
     const coefInputs = document.querySelectorAll(`input[name^="a[${r}]"]`); 
@@ -189,7 +179,7 @@ function resolverGrafico() {
     }
 
     let isFeasibleForAll = true;
-    for (const constraint of constraintsData) { // Usar constraintsData
+    for (const constraint of constraintsData) {
       const sum = constraint.a * pt.x1 + constraint.b * pt.x2;
       let constraintSatisfied = false;
       if (constraint.rel === '<=') { 
@@ -214,7 +204,7 @@ function resolverGrafico() {
   });
   
   let originFeasible = true;
-  for (const constraint of constraintsData) { // Usar constraintsData
+  for (const constraint of constraintsData) {
       const sum = 0; 
       let constraintSatisfied = false;
       if (constraint.rel === '<=') { constraintSatisfied = sum <= constraint.val + tolerance; }
@@ -230,10 +220,8 @@ function resolverGrafico() {
           feasibleVertices.push({ x1: 0, x2: 0 });
       }
   }
-    
-  // Ordenar vértices factibles para dibujar la región factible correctamente
+
   if (feasibleVertices.length >= 3) {
-    // Calcular centroide
     let centerX = 0;
     let centerY = 0;
     feasibleVertices.forEach(v => {
@@ -243,7 +231,6 @@ function resolverGrafico() {
     centerX /= feasibleVertices.length;
     centerY /= feasibleVertices.length;
 
-    // Ordenar por ángulo con respecto al centroide
     feasibleVertices.sort((a, b) => {
       const angleA = Math.atan2(a.x2 - centerY, a.x1 - centerX);
       const angleB = Math.atan2(b.x2 - centerY, b.x1 - centerX);
@@ -252,7 +239,7 @@ function resolverGrafico() {
   }
 
 
-  if (feasibleVertices.length === 0 && !originFeasible) { // Modificada la condición
+  if (feasibleVertices.length === 0 && !originFeasible) {
     const resultContainer = document.getElementById('graficoResultados');
     const message = "<p>No se encontraron vértices factibles. El problema puede no tener solución (región factible vacía) o ser no acotado de una manera que no produce vértices evaluables con este método.</p>";
     resultContainer.innerHTML = message;
@@ -266,11 +253,9 @@ function resolverGrafico() {
   let optimalSolution = null;
   let optimalZ = (tipoZ === 'max') ? -Infinity : Infinity;
 
-  // Si solo el origen es factible, es la solución óptima
   if (feasibleVertices.length === 0 && originFeasible) {
-      feasibleVertices.push({x1:0, x2:0}); // Asegurar que (0,0) esté en la lista para evaluar
+      feasibleVertices.push({x1:0, x2:0});
   }
-
 
   feasibleVertices.forEach(vertex => {
     const zValue = objCoeffs[0] * vertex.x1 + objCoeffs[1] * vertex.x2;
@@ -281,22 +266,21 @@ function resolverGrafico() {
       if (currentZValueRounded > currentOptimalZRounded) {
         optimalZ = zValue; 
         optimalSolution = vertex;
-      } else if (currentZValueRounded === currentOptimalZRounded) { // Múltiples soluciones
-          if (!optimalSolution) optimalSolution = vertex; // Tomar la primera si no hay ninguna aún
+      } else if (currentZValueRounded === currentOptimalZRounded) {
+          if (!optimalSolution) optimalSolution = vertex;
       }
-    } else { // min
+    } else {
       if (currentZValueRounded < currentOptimalZRounded) {
         optimalZ = zValue; 
         optimalSolution = vertex;
-      } else if (currentZValueRounded === currentOptimalZRounded) { // Múltiples soluciones
+      } else if (currentZValueRounded === currentOptimalZRounded) {
           if (!optimalSolution) optimalSolution = vertex;
       }
     }
   });
   
-  // Si no se encontró solución óptima pero hay vértices factibles (ej. todos dan Z=0 y se buscaba min -Infinity)
   if (!optimalSolution && feasibleVertices.length > 0) {
-      optimalSolution = feasibleVertices[0]; // Tomar el primer vértice factible como referencia
+      optimalSolution = feasibleVertices[0];
       optimalZ = objCoeffs[0] * optimalSolution.x1 + objCoeffs[1] * optimalSolution.x2;
   }
 
@@ -323,11 +307,10 @@ function resolverGrafico() {
 
   document.getElementById('graficoResultados').innerHTML = resultHTML;
 
-  // Llamada a la función para mostrar el gráfico
-  if (optimalSolution) { // Solo graficar si hay una solución que mostrar
+  if (optimalSolution) {
     mostrarGrafico(constraintsData, feasibleVertices, optimalSolution);
-  } else if (feasibleVertices.length > 0) { // Si hay región factible pero Z es no acotado
-    mostrarGrafico(constraintsData, feasibleVertices, null); // Graficar región sin punto óptimo resaltado
+  } else if (feasibleVertices.length > 0) {
+    mostrarGrafico(constraintsData, feasibleVertices, null);
   }
    else {
       if (myChartInstance) {
