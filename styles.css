@@ -127,7 +127,7 @@ td {
   transform: scaleX(0);
   transform-origin: left;
   transition: transform .4s;
-  z-index: -2;
+  z-index: -1;
   border-radius: 4px;
 }
 
